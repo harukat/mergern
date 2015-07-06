@@ -35,8 +35,8 @@ mergern.py
 
 　　　　　%./mergern.py sample/release-9.0.sgml sample/release-9.1.orid.sgml 2
 
-          release-9.1.orid.sgmlにdummyデータを4行含ませている。9.1.6をコピーする。
-　　　　　4件の警告が発生する
+          release-9.1.orid.sgmlにdummyデータを3行含ませている。9.1.6をコピーする。
+　　　　　3件の警告が発生する
 
 
 FAQ:
