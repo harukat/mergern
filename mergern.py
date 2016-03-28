@@ -1,8 +1,23 @@
 #!/usr/bin/env python
-#coding:utf-8
+# coding: utf_8
 import sys
 #import csv
 import codecs
+import re
+
+# ヘッダ部分の対訳表
+header_dict = {
+    '^  <title>Release ([0-9.]+)<': { "skip":1, "str":u'  <title>リリースX.X.X</title>\n' },
+    '^  <title>Release Date<': { "skip":1, "str":u'  <title>リリース日</title>\n' },
+    '^   This release contains a small number of fixes from ([0-9.]+)':
+      { "skip":3, "str":u'このリリースはX.X.Xに対し、各種不具合を修正したものです。X.Xメジャーリリースにおける新機能については、<xref linkend="release-X-X">を参照してください。\n'},
+    '^   <title>Migration to Version ([0-9.]+)<': { "skip":1, "str":u'バージョンX.X.Xへの移行\n' },
+    '^    A dump/restore is not required for those running ([0-9.]+)X':
+      { "skip":1, "str":u'X.X.Xからの移行ではダンプ/リストアは不要です。\n' },
+    '^    However, if you are upgrading from a version earlier than':
+      { "skip":2, "str":u'しかしながら、X.X.X以前のリリースからアップグレードする場合は、<xref linkend="release-X-X-X">を参>照して下さい。' },
+    '^   <title>Changes<': { "skip":1, "str":u'   <title>変更点</title>' }
+}
 
 
 #翻訳文を持つディクショナリリストを作成する
@@ -148,7 +163,7 @@ if __name__ == '__main__':
 #######################実行フェーズ#######################
 
 #翻訳対象のファイルをOpen
-    targ_data_file = codecs.open(sys.argv[2],'rU',encoding='utf-8')
+    targ_data_file = codecs.open(sys.argv[2],'rU',encoding='utf_8')
     targ_dataline = targ_data_file.readlines()
 
     #f=open('outputfile.sgml','w')
@@ -156,7 +171,7 @@ if __name__ == '__main__':
 
 
 #翻訳文があるファイルをOpen
-    orid_data=codecs.open(sys.argv[1],'rU',encoding='utf-8')
+    orid_data=codecs.open(sys.argv[1],'rU',encoding='utf_8')
     orid_dataline=orid_data.readlines()
 
     trans_dict,para_cnt=create_transed_list(orid_dataline,targ_sect1_cnt)
@@ -169,11 +184,13 @@ if __name__ == '__main__':
     sect1_cnt=0
     in_warn=False
 
+    skip_count = 0
+    trans_text = ""
+
     for targ_line_data in targ_dataline:
 #ここからタグの解析
 #ディクショナリのキーになる最初の1文は必ずparaの中にある。
        
-
         if '<sect1' in targ_line_data:
             sect1_flag=True
             sect1_cnt=sect1_cnt + 1
@@ -188,9 +205,20 @@ if __name__ == '__main__':
 
         if sect1_cnt != targ_sect1_cnt:
 
-             f.write(targ_line_data.encode('utf_8'))
+            f.write(targ_line_data.encode('utf_8'))
 
         else:
+
+            # ヘッダ部分の置換処理
+            header_trans_flag = False
+            for hdk in header_dict.keys():
+                if (re.match(hdk, targ_line_data)):
+                    trans_text = u"-->\n" + header_dict[hdk]["str"]
+                    header_trans_flag = True
+                    break
+            if header_trans_flag : 
+                f.write(u"<!--\n".encode('utf_8'));
+                skip_count = header_dict[hdk]["skip"]
 
             if targ_line_data in trans_dict :
                 tracnt=tracnt+1
@@ -208,9 +236,16 @@ if __name__ == '__main__':
                         print "WARN:<para>の開始行 " + trans_dictkey_tmp.encode('utf-8')
                     print "WARN:  対象行       "+targ_line_data.rstrip().encode('utf-8')
                     in_warn=True
-            if not targflag:
 
+            if not targflag:
                 f.write(targ_line_data.encode('utf_8')) 
+
+            # ヘッダ部分の置換
+            if skip_count >= 0:
+                skip_count = skip_count - 1
+                if skip_count == 0:
+                    f.write(trans_text.encode('utf_8'));
+                    trans_text = ""
 
 
 ####################### 終了処理 #######################
