@@ -15,7 +15,7 @@ header_dict = {
     '^    A dump/restore is not required for those running ([0-9.]+)X':
       { "skip":1, "str":u'X.X.Xからの移行ではダンプ/リストアは不要です。\n' },
     '^    However, if you are upgrading from a version earlier than':
-      { "skip":2, "str":u'しかしながら、X.X.X以前のリリースからアップグレードする場合は、<xref linkend="release-X-X-X">を参>照して下さい。' },
+      { "skip":2, "str":u'しかしながら、X.X.X以前のリリースからアップグレードする場合は、<xref linkend="release-X-X-X">を参照して下さい。\n' },
     '^   <title>Changes<': { "skip":1, "str":u'   <title>変更点</title>' }
 }
 
