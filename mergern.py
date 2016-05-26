@@ -11,7 +11,7 @@ header_dict = {
     '^  <title>Release Date<': { "skip":1, "str":u'  <title>リリース日</title>\n' },
     '^   This release contains a small number of fixes from ([0-9.]+)':
       { "skip":3, "str":u'このリリースはX.X.Xに対し、各種不具合を修正したものです。X.Xメジャーリリースにおける新機能については、<xref linkend="release-X-X">を参照してください。\n'},
-    '^   <title>Migration to Version ([0-9.]+)<': { "skip":1, "str":u'バージョンX.X.Xへの移行\n' },
+    '^   <title>Migration to Version ([0-9.]+)<': { "skip":1, "str":u'   <title>バージョンX.X.Xへの移行</title>\n' },
     '^    A dump/restore is not required for those running ([0-9.]+)X':
       { "skip":1, "str":u'X.X.Xからの移行ではダンプ/リストアは不要です。\n' },
     '^    However, if you are upgrading from a version earlier than':
